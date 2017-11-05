@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  color: #444;
+  font-family: "Muli", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+strong {
+  font-weight: 700;
+}
+
+main {
+  margin: 12.8rem;
+}
+
+header {
+  margin: 0 0 6.4rem 0;
+}
+
+section {
+  margin: 0 0 12.8rem 0;
+}
+
+h1 {
+  font-size: 4rem;
+  margin: 0 0 3.2rem 0;
+}
+
+h2 {
+  font-size: 2.8rem;
+  margin: 0 0 3.2rem 0;
+}
+
+h3 {
+  font-size: 2.2rem;
+  margin: 0 0 1.6rem 0;
+}
+
+p {
+  line-height: 1.6;
+  margin: 0 0 1.6rem 0;
+}
+
+ul, ol {
+  margin: 3.2rem 0 3.2rem 3.2rem;
+}
+
+li {
+  margin: 0 0 1.2rem 0;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin: 0 0 0.8rem 0;
+}
+
+fieldset {
+  background-color: #f7f7f7;
+  border: 0;
+  font-size: 1.6rem;
+  margin: 6.4rem -12.8rem 6.4rem -12.8rem;
+  padding: 6.4rem 12.8rem;
+}
+
+
+pre {
+  background-color: #f7f7f7;
+  border: 0;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  margin: 6.4rem -12.8rem 6.4rem -12.8rem;
+  overflow-x: scroll;
+  padding: 6.4rem 12.8rem;
+  width: 100%;
+}
+
+code {
+
+}
+
+
+[type="text"] {
+  border: 0.1rem solid #444;
+  font-family: "Muli", sans-serif;
+  font-size: 1.6rem;
+  padding: 0.8rem 0.8rem;
+}
+
+
+[type="submit"] {
+  background-color: #2D9CDB;
+  border: 0.1rem solid transparent;
+  color: #fff;
+  font-family: "Muli", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  padding: 0.8rem 1.6rem;
+}
+
+
+.field--invalid {
+  border: 0.1rem solid #EB5757;
+}
+
+
+
+.field {
+  margin: 0 0 2.4rem 0;
+}
+
+
+
+
+.field__errormessage {
+  color: #EB5757;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0.8rem 0 0 0;
+  min-height: 1.3rem; 
+}
+
+
+
