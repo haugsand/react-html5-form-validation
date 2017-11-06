@@ -100,7 +100,7 @@ class App extends Component {
 
                     <Example1 />
 
-                    <CodeBlock input={ex1} language="js" />
+                    <CodeBlock input={ex1} />
 
                 </section>
 
@@ -119,7 +119,7 @@ class App extends Component {
 
                     <Example2 />
 
-                    <CodeBlock input={ex2} language="js" />
+                    <CodeBlock input={ex2} />
 
                 </section>
 
@@ -136,7 +136,7 @@ class App extends Component {
 
                     <Example3 />
 
-                    <CodeBlock input={ex3} language="js" />
+                    <CodeBlock input={ex3} />
 
                 </section>
 

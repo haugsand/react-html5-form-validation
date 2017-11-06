@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import Prism from 'prismjs';
+import PrismJsx from 'prismjs/components/prism-jsx.min';
 import 'prismjs/themes/prism.css';
 
 
@@ -12,11 +13,6 @@ class CodeBlock extends Component {
 
     render() {
 
-        const {
-            input,
-            language
-        } = this.props;
-
         const style = {
             margin: '6.4rem -12.8rem',
             padding: '6.4rem 3.2rem 6.4rem 12.8rem',
@@ -25,8 +21,8 @@ class CodeBlock extends Component {
 
         return (
             <pre style={style}>
-                <code className={'language-' + language}>
-                    {input}
+                <code className={'language-jsx'}>
+                    {this.props.input}
                 </code>
             </pre>
         );
