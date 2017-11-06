@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import Prism from 'prismjs';
-import PrismJsx from 'prismjs/components/prism-jsx.min';
+import 'prismjs/components/prism-jsx.min';
 import 'prismjs/themes/prism.css';
 
 
