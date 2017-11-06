@@ -18,6 +18,10 @@ class FormValidated extends Component {
         );
     };
 
+    validateField = field => {
+        this.updateField(field.id, getValidatedState(field));
+    };
+
     handleSubmit = e => {
         e.preventDefault();
 
@@ -45,13 +49,17 @@ class FormValidated extends Component {
                 value: field.value
             });
         } else {
-            this.updateField(field.id, getValidatedState(field));
+            this.validateField(field);
+        }
+
+        if (this.props.onChange && this.props.onChange[field.id]) {
+            this.props.onChange[field.id](field);
         }
     };
 
     handleInputBlur = e => {
         const field = e.target;
-        this.updateField(field.id, getValidatedState(field));
+        this.validateField(field);
 
         if (this.props.onBlur && this.props.onBlur[field.id]) {
             this.props.onBlur[field.id](field);
@@ -75,6 +83,10 @@ class FormValidated extends Component {
 
     addPropsToChildren = children => {
         const childrenWithProps = React.Children.map(children, child => {
+
+            if (!child.props) {
+                return child;
+            }
             if (child.type === "input" && child.props.type !== "submit") {
                 const constraints = this.getConstraints(child.props);
                 const fieldId = child.props.id;
@@ -108,8 +120,7 @@ class FormValidated extends Component {
                 );
             } else {
                 if (
-                    child.props.children &&
-                    typeof child.props.children !== "string"
+                    child.props.children
                 ) {
                     const grandChildren = this.addPropsToChildren(
                         child.props.children

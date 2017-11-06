@@ -19,7 +19,8 @@ class CodeBlock extends Component {
 
         const style = {
             margin: '6.4rem -12.8rem',
-            padding: '6.4rem 12.8rem'
+            padding: '6.4rem 3.2rem 6.4rem 12.8rem',
+            width: 'calc(100% + 9.6rem)'
         };
 
         return (
