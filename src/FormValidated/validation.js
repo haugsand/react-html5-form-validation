@@ -13,32 +13,12 @@ export function initFieldsDefaultState(fieldList) {
 }
 
 export function getValidatedState(field) {
-    //field.setCustomValidity('Argh');
     return {
-        value: field.value,
         valid: field.validity.valid,
         errorMessage: getErrorMessage(field)
     };
 }
 
-export function validateForm(fields) {
-    let isValid = true;
-
-    let newState = {};
-
-    fields.forEach(field => {
-        if (!field.validity.valid) {
-            isValid = false;
-        }
-
-        newState[field.id] = getValidatedState(field);
-    });
-
-    return {
-        isValid: isValid,
-        newState: newState
-    };
-}
 
 export function getErrorMessage(field) {
 

@@ -3,9 +3,42 @@ import update from "immutability-helper";
 
 import {
     initFieldsDefaultState,
-    getValidatedState,
-    validateForm
+    getValidatedState
 } from "./validation";
+
+
+function elementIsAField(element) {
+    const fieldElements = [
+        "input", 
+        "select", 
+        "textarea"
+    ];
+    return fieldElements.indexOf(element) > -1;
+}
+
+function inputTypeIsUnsupported(type) {
+    const unSupportedInputTypes = [
+        "button", 
+        "hidden", 
+        "image", 
+        "reset", 
+        "submit"
+    ];
+    return unSupportedInputTypes.indexOf(type) > -1;
+}
+
+function childIsNotAnElement(child) {
+    return !child.props;
+}
+
+function elementIsErrorMessage(element) {
+    return element.props["data-errorfor"];
+}
+
+function elementHasChildren(element) {
+    return element.props.children;
+}
+
 
 class FormValidated extends Component {
     state = initFieldsDefaultState(this.props.fieldList);
@@ -18,19 +51,30 @@ class FormValidated extends Component {
         );
     };
 
-    validateField = field => {
-        this.updateField(field.id, getValidatedState(field));
+    validateField = (fieldId, field) => {
+        // .setCustomValidity()
+        this.updateField(fieldId, getValidatedState(field));
     };
 
     handleSubmit = e => {
         e.preventDefault();
 
-        const fields = this.props.fieldList.map(fieldId => this.refs[fieldId]);
-        const { isValid, newState } = validateForm(fields);
 
-        Object.keys(newState).forEach(fieldId => {
-            this.updateField(fieldId, newState[fieldId]);
+
+        let isValid = true;
+
+        this.props.fieldList.forEach(fieldId => {
+            if (this.refs[fieldId]) {
+                const field = this.refs[fieldId];
+
+                if (!field.validity.valid) {
+                    isValid = false;
+                }
+
+                this.validateField(fieldId, field);
+            }
         });
+
 
         if (isValid) {
             let values = {};
@@ -45,11 +89,10 @@ class FormValidated extends Component {
         const field = e.target;
 
         if (this.state[field.id].valid) {
-            this.updateField(field.id, {
-                value: field.value
-            });
+            this.updateField(field.id, {value: field.value});
         } else {
-            this.validateField(field);
+            this.updateField(field.id, {value: field.value});
+            this.validateField(field.id, field);
         }
 
         if (this.props.onChange && this.props.onChange[field.id]) {
@@ -59,12 +102,18 @@ class FormValidated extends Component {
 
     handleInputBlur = e => {
         const field = e.target;
-        this.validateField(field);
+        this.validateField(field.id, field);
 
         if (this.props.onBlur && this.props.onBlur[field.id]) {
             this.props.onBlur[field.id](field);
         }
     };
+
+    handleRadioChange = e => {
+        const field = e.target;
+        this.updateField(field.name, {value: field.value});
+    };
+
 
     getConstraints = props => {
         const constraintsAttr = Object.keys(props)
@@ -84,10 +133,33 @@ class FormValidated extends Component {
     addPropsToChildren = children => {
         const childrenWithProps = React.Children.map(children, child => {
 
-            if (!child.props) {
+            if (childIsNotAnElement(child)) {
                 return child;
             }
-            if (child.type === "input" && child.props.type !== "submit") {
+
+            if (elementIsAField(child.type)) {
+
+                if (inputTypeIsUnsupported(child.props.type)) {
+                    return React.cloneElement(child, {});
+                }
+
+                if (["radio"].indexOf(child.props.type) > -1) {
+                    const fieldId = child.props.name;
+
+                    const props = {
+                        checked: this.state[fieldId].value === child.props.value,
+                        onChange: this.handleRadioChange
+                    };
+
+                    if (child.props.required) {
+                        props.ref = fieldId;
+                        props["aria-invalid"] = !this.state[fieldId].valid;
+                        props["aria-errormessage"] = fieldId + "-errormessage";
+                    }
+
+                    return React.cloneElement(child, props);
+                } 
+
                 const constraints = this.getConstraints(child.props);
                 const fieldId = child.props.id;
 
@@ -98,7 +170,7 @@ class FormValidated extends Component {
                     fieldClassNames += " " + child.props.className;
                 }
 
-                return React.cloneElement(child, {
+                const props = {
                     ref: fieldId,
                     className: fieldClassNames,
                     onChange: this.handleInputChange,
@@ -107,46 +179,33 @@ class FormValidated extends Component {
                     "aria-invalid": !this.state[fieldId].valid,
                     "aria-errormessage": fieldId + "-errormessage",
                     ...constraints
-                });
-            } else if (child.props && child.props["data-errorfor"]) {
+                };
+
+                return React.cloneElement(child, props);
+
+            } 
+
+            if (elementIsErrorMessage(child)) {
                 const fieldId = child.props["data-errorfor"];
-                return React.cloneElement(
-                    child,
-                    {
-                        id: fieldId + "-errormessage",
-                        role: "alert"
-                    },
-                    this.state[fieldId].errorMessage
-                );
-            } else {
-                if (
-                    child.props.children
-                ) {
-                    const grandChildren = this.addPropsToChildren(
-                        child.props.children
-                    );
-                    return React.cloneElement(child, {}, grandChildren);
-                } else {
-                    return React.cloneElement(child, {});
-                }
+                const props = {
+                    id: fieldId + "-errormessage",
+                    role: "alert"
+                };
+                return React.cloneElement(child, props, this.state[fieldId].errorMessage);
+            } 
+
+            if (elementHasChildren(child)) { 
+                const grandChildren = this.addPropsToChildren(child.props.children);
+                return React.cloneElement(child, {}, grandChildren);
             }
+
+            return React.cloneElement(child, {});
         });
 
         return childrenWithProps;
     };
 
     render() {
-
-        // TODO: Hva med felter som må valideres mot en ekstern tjeneste?
-        //      data-constraint-function={this.external}? Som gir true eller false?
-        //      Gjøres uten før komponenten, men fyller inn en input hidden?
-        //      .setCustomValidity()
-        // 
-        //  Hva med en typehead?
-        //  Hva med felter som åpnes når andre felter er åpne?
-        //  Positive meldinger om felter er valid? 
-        //  Skille mellom untouched og valid - Legg til "touched"
-
 
         return (
             <form onSubmit={this.handleSubmit} noValidate>

@@ -5,10 +5,12 @@ class Example3 extends Component {
 
     state = {
         nibor: 0.81,
-        interest: 0
+        interest: 0,
+        comment: ''
     }
 
     fieldList = [
+        "fieldComment",
         "fieldInterest"
     ];
 
@@ -24,6 +26,22 @@ class Example3 extends Component {
         }
     };
 
+    saveField = () => {
+        this.setState(prevState => ({
+            comment: 'Lagrer ...'
+        }), () => {
+            setTimeout(() => {
+                this.setState(prevState => ({
+                    comment: ''
+                }))
+            }, 1500);
+        })
+    }
+
+    onBlur = {
+        fieldComment: this.saveField
+    };
+
     onChange = {
         fieldInterest: this.updateInterest
     };
@@ -33,8 +51,19 @@ class Example3 extends Component {
         const totalInterest = (this.state.nibor + this.state.interest).toFixed(2);
 
         return (
-            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} onChange={this.onChange}>
+            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} onChange={this.onChange} onBlur={this.onBlur}>
                 <fieldset>
+
+                    <div className="field">
+                        <label htmlFor="fieldComment">Kommentar</label>
+                        <input
+                            id="fieldComment"
+                            type="text"
+                            required
+                        />
+                        {this.state.comment}
+                        <p data-errorfor="fieldComment" className="field__errormessage" />
+                    </div>
 
                     <div className="field">
                         <label htmlFor="fieldInterest">Rentepåslag</label>

@@ -42,7 +42,6 @@ h2 {
 }
 
 h2 span {
-  color: #2D9CDB;
   display: block;
   font-size: 1.8rem;
   font-weight: 400;
@@ -51,12 +50,55 @@ h2 span {
 
 h3 {
   font-size: 2.2rem;
-  margin: 0 0 1.6rem 0;
+  margin: 4.8rem 0 1.6rem 0;
+}
+
+a {
+  color: #2D9CDB;
 }
 
 p {
   line-height: 1.6;
   margin: 0 0 1.6rem 0;
+}
+
+.table-container {
+  background-color: #f7f7f7;
+  margin: 6.4rem -12.8rem;
+  padding: 3.2rem 3.2rem 3.2rem 12.8rem;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 1.6rem;
+  margin: 0 -0.8rem;
+}
+
+td {
+  padding: 0.8rem 0.8rem;
+  text-align: center;
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  padding: 1.6rem 0.8rem;
+}
+
+th:not(:first-child) {
+  padding: 1.6rem 1.6rem;
+}
+
+tr:first-child th {
+  padding: 0;
+}
+
+tbody tr:hover {
+  background-color: #fff;
 }
 
 ul, ol {
@@ -71,6 +113,23 @@ ol:last-child {
 
 li {
   margin: 0 0 1.2rem 0;
+}
+
+dl {
+  margin: 3.2rem 0;
+}
+
+dt {
+  font-weight: 700;
+  margin: 0 0 0.8rem 0;
+}
+
+dt:not(:first-child) {
+  margin-top: 2.4rem;
+}
+
+dd {
+  margin: 0 0 0.8rem 0;
 }
 
 label {
@@ -100,7 +159,11 @@ pre {
 }
 
 code {
+ font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
 
+table code {
+  font-size: 1.4rem;
 }
 
 
@@ -114,6 +177,10 @@ code {
   width: 24rem;
 }
 
+
+[type="radio"] {
+  margin-right: 0.8rem;
+}
 
 [type="submit"] {
   background-color: #2D9CDB;
