@@ -5,7 +5,7 @@ class Example3 extends Component {
 
     state = {
         nibor: 0.81,
-        interest: 0,
+        interest: 0.75,
         comment: ''
     }
 
@@ -46,12 +46,22 @@ class Example3 extends Component {
         fieldInterest: this.updateInterest
     };
 
+    initialValues = {
+        fieldInterest: this.state.interest
+    };
+
     render() {
 
         const totalInterest = (this.state.nibor + this.state.interest).toFixed(2);
 
         return (
-            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} onChange={this.onChange} onBlur={this.onBlur}>
+            <FormValidated 
+                fieldList={this.fieldList} 
+                onSubmit={this.submitForm} 
+                onBlur={this.onBlur}
+                onChange={this.onChange}
+                initialValues={this.initialValues} 
+            >
                 <fieldset>
 
                     <div className="field">

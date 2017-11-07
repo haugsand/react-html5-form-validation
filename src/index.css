@@ -168,7 +168,8 @@ table code {
 
 
 [type="text"],
-[type="number"] {
+[type="number"],
+[type="password"] {
   border: 0.1rem solid #444;
   font-family: "Muli", sans-serif;
   font-size: 1.6rem;
@@ -179,7 +180,7 @@ table code {
 
 
 [type="radio"] {
-  margin-right: 0.8rem;
+  margin-right: 1.2rem;
 }
 
 [type="submit"] {

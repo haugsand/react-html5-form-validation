@@ -1,24 +1,3 @@
-export function initFieldsDefaultState(fieldList) {
-    let state = {};
-
-    fieldList.forEach(field => {
-        state[field] = {
-            value: "",
-            errorMessage: false,
-            valid: true
-        };
-    });
-
-    return state;
-}
-
-export function getValidatedState(field) {
-    return {
-        valid: field.validity.valid,
-        errorMessage: getErrorMessage(field)
-    };
-}
-
 
 export function getErrorMessage(field) {
 

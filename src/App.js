@@ -8,11 +8,17 @@ import Example1 from "./Examples/Example1";
 import Example2 from "./Examples/Example2";
 import Example3 from "./Examples/Example3";
 import Example4 from "./Examples/Example4";
+import Example5 from "./Examples/Example5";
+import Example6 from "./Examples/Example6";
+import Example7 from "./Examples/Example7";
 
 import ex1 from "!raw-loader!./Examples/Example1.jsx";
 import ex2 from "!raw-loader!./Examples/Example2.jsx";
 import ex3 from "!raw-loader!./Examples/Example3.jsx";
 import ex4 from "!raw-loader!./Examples/Example4.jsx";
+import ex5 from "!raw-loader!./Examples/Example5.jsx";
+import ex6 from "!raw-loader!./Examples/Example6.jsx";
+import ex7 from "!raw-loader!./Examples/Example7.jsx";
 
 
 class App extends Component {
@@ -30,10 +36,39 @@ class App extends Component {
                 <section>
                     <h2>Bakgrunn</h2>
 
+
+                    <h3>Motivasjon</h3>
+
                     <ul>
+                        <li>Skal ikke være nødvendig å innføre egne konvensjoner for validering, 
+                        når dette allerede finnes i HTML og Javascript.</li>
                         <li>Valideringsregler angis ved standard HTML-attributter, direkte på elementene.</li>
                         <li>Valideringen skjer ved hjelp av Constraint Validation API</li>
+                        <li>Skjuler nettlesernes innebygde validering, av UX-hensyn.</li>
                     </ul>
+
+                    <h3>Validering UX</h3>
+
+                    <ul>
+                        <li>Validering skjer ikke før brukeren har fylt ut et felt. Først ved onBlur</li>
+                        <li>Om felter har en valderingsfeil, skjer validering for hvert tastetrykk.</li>
+                        <li>Alle felter valideres onSubmit.</li>
+                        <li>Submit-knappen blir aldri disabled.</li>
+                        <li>Én feilmelding vises samtidig, anbefalt rett nedenfor skjema-elementet.</li>
+                    </ul>
+
+                    <h3>Bevisste valg</h3>
+
+                    <ul>
+                        <li>Boilerplate-kode som håndtering av state og opprettelse av controlled component, skjules.</li>
+                        <li>Et sett med standardfeilmeldinger per valideringsfeil.</li>
+                        <li>Beholder standard HTML-elementer og -attributter, fremfor å lage React-komponenter.</li>
+                        <li>Skal være enkelt å ta i bruk, med minimal konfigurasjon.</li>
+                        <li>Skal være mulig å lage mer avansert funksjonalitet med å utvide morkomponenten,
+                        fremfor å konfigurere denne komponenten.</li>
+                        <li>Du velger selv all HTML og CSS.</li>
+                    </ul>
+
                 </section>
 
 
@@ -43,11 +78,7 @@ class App extends Component {
 
                     <h3>Når valideres det?</h3>
 
-                    <ul>
-                        <li>Etter at element har mistet fokus.</li>
-                        <li>For hvert tastetrykk, om det finnes en feil.</li>
-                        <li>Alle felter valideres onSubmit</li>
-                    </ul>
+
 
 
                     <h3>Hva valideres?</h3>
@@ -229,6 +260,7 @@ class App extends Component {
                     <ul>
                         <li>Hver gang det skjer en endring i input-feltet, skal morkomponenten bli oppdatert.</li>
                         <li>Morkomponentens state skal kun oppdateres om feltet har en gyldig verdi.</li>
+                        <li>Rentepåslaget har en standardverdi.</li>
                     </ul>
 
                     <Example3 />
@@ -255,23 +287,66 @@ class App extends Component {
 
                 <section>
                     <h2><span>Eksempel 5 </span>Gruppe med checkbox</h2>
-                    <p>Minst x verdier, og/eller maks y verdier i en gruppe.</p>
+                    <p>TODO: Minst x verdier, og/eller maks y verdier i en gruppe. </p>
+
+                    <ul>
+                        <li>"Engelsk" må være valgt.</li>
+                    </ul>
+
+                    <Example5 />
+
+                    <CodeBlock input={ex5} />
                 </section>
 
                 <section>
-                    <h2><span>Eksempel 6 </span>Asynkron, custom validation</h2>
+                    <h2><span>Eksempel 6 </span>Validering av passord</h2>
+                    <p>Tekst.</p>
+
+                    <ul>
+                        <li>Passordet må følge et bestemt mønster, angitt ved pattern.</li>
+                        <li>Title inneholder en skreddersydd feilmelding.</li>
+                        <li>De to passordfeltene må være like.</li>
+                    </ul>
+
+                    <Example6 />
+
+                    <CodeBlock input={ex6} />
+
+                </section>
+
+                <section>
+                    <h2><span>Eksempel 7 </span>Asynkron, custom validation</h2>
                     <p>Bruk en ekstern tjeneste til å komme med egendefinerte feilmeldinger.</p>
+
+                    <ul>
+                        <li>Brukernavnets tilgjengelighet skal kontrolleres mot en ekstern tjeneste.</li>
+                        <li>I dette eksempelet vil brukernavnet "magnus" gi en valideringsfeil. </li>
+                        <li>Angi en valideringsfunksjon i morkomponenten, ved hjelp av customValidation.</li>
+                        <li>Funksjonen må returnere en Promise.</li>
+                    </ul>
+
+                    <Example7 />
+
+                    <CodeBlock input={ex7} />
+
                 </section>
 
                 <section>
-                    <h2><span>Eksempel 7 </span>Dynamiske skjema</h2>
+                    <h2><span>Eksempel 8 </span>Dynamiske skjema</h2>
                     <p>Skjema-elementer vises/skjules avhengig av verdier i andre felt.</p>
                 </section>
 
                 <section>
-                    <h2><span>Eksempel 8 </span>Standardverdier</h2>
-                    <p>Nå er skjemaet helt tomt... </p>
+                    <h2><span>Eksempel 9 </span>Kombinere flere skjemaer</h2>
+                    <p>Kan dette skjemmaet kombineres med et felt som finnes et annet sted?</p>
                 </section>
+
+
+                <section>
+                    <h2><span>Eksempel 10 </span>Multiple verdier</h2>
+                    <p>Noen elementer har støtte for mer enn én verdi.</p>
+                </section>
+
 
             </main>
         );

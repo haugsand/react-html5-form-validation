@@ -1,47 +1,109 @@
 import React, { Component } from "react";
+import { array, func, object } from 'prop-types';
 import update from "immutability-helper";
 
-import {
-    initFieldsDefaultState,
-    getValidatedState
-} from "./validation";
+import { getErrorMessage } from "./validation";
 
 
-function elementIsAField(element) {
-    const fieldElements = [
-        "input", 
-        "select", 
-        "textarea"
-    ];
-    return fieldElements.indexOf(element) > -1;
+
+
+
+
+const fieldElements = [
+    "input", 
+    "select", 
+    "textarea"
+];
+
+const unSupportedInputTypes = [
+    "button", 
+    "hidden", 
+    "image", 
+    "reset", 
+    "submit"
+];
+
+function elementIsAField(element) { return fieldElements.indexOf(element) > -1; }
+function inputTypeIsUnsupported(type) { return unSupportedInputTypes.indexOf(type) > -1; }
+function childIsNotAnElement(child) { return !child.props; }
+function elementIsErrorMessage(element) { return element.props["data-errorfor"]; }
+function elementHasChildren(element) { return element.props.children; }
+
+
+
+
+
+
+
+function getInitialState(fieldList, initialValues) {
+    let initialState = {};
+
+    fieldList.forEach(field => {
+        initialState[field] = {
+            value: "",
+            errorMessage: false,
+            valid: true
+        };
+    });
+
+    Object.keys(initialValues).forEach(key => {
+        initialState[key].value = initialValues[key];
+    });
+
+    return initialState;
 }
 
-function inputTypeIsUnsupported(type) {
-    const unSupportedInputTypes = [
-        "button", 
-        "hidden", 
-        "image", 
-        "reset", 
-        "submit"
-    ];
-    return unSupportedInputTypes.indexOf(type) > -1;
+function addCustomValidation(fieldId, field, customValidation) {
+    return new Promise((resolve, reject) => {
+        if (customValidation[fieldId]) {
+            customValidation[fieldId](field.value)
+                .then(errorMessage => {
+                    field.setCustomValidity(errorMessage);
+                    resolve(field);
+                })
+        } else {
+            resolve(field);
+        }
+    });
 }
 
-function childIsNotAnElement(child) {
-    return !child.props;
+
+function addOnBlur(fieldId, field, onBlur) {
+    if (onBlur[fieldId]) {
+        onBlur[fieldId](field);
+    }
 }
 
-function elementIsErrorMessage(element) {
-    return element.props["data-errorfor"];
+function addOnChange(fieldId, field, onChange) {
+    if (onChange[fieldId]) {
+        onChange[fieldId](field);
+    }
 }
 
-function elementHasChildren(element) {
-    return element.props.children;
-}
+
+
+
 
 
 class FormValidated extends Component {
-    state = initFieldsDefaultState(this.props.fieldList);
+
+    state = getInitialState(this.props.fieldList, this.props.initialValues);
+
+    static propTypes = {
+        fieldList: array.isRequired,
+        onSubmit: func.isRequired,
+        onBlur: object,
+        onChange: object,
+        initialValues: object,
+        customValidation: object
+    };
+
+    static defaultProps = {
+        onBlur: {},
+        onChange: {},
+        initialValues: {},
+        customValidation: {}
+    };
 
     updateField = (fieldId, newState) => {
         this.setState(prevState =>
@@ -52,14 +114,17 @@ class FormValidated extends Component {
     };
 
     validateField = (fieldId, field) => {
-        // .setCustomValidity()
-        this.updateField(fieldId, getValidatedState(field));
+        addCustomValidation(fieldId, field, this.props.customValidation)
+            .then(field => {
+                this.updateField(fieldId, {
+                    valid: field.validity.valid,
+                    errorMessage: getErrorMessage(field)
+                });
+            })
     };
 
     handleSubmit = e => {
         e.preventDefault();
-
-
 
         let isValid = true;
 
@@ -67,10 +132,10 @@ class FormValidated extends Component {
             if (this.refs[fieldId]) {
                 const field = this.refs[fieldId];
 
+                // TODO: Tar ikke hensyn til customValidation
                 if (!field.validity.valid) {
                     isValid = false;
                 }
-
                 this.validateField(fieldId, field);
             }
         });
@@ -87,31 +152,27 @@ class FormValidated extends Component {
 
     handleInputChange = e => {
         const field = e.target;
-
-        if (this.state[field.id].valid) {
-            this.updateField(field.id, {value: field.value});
-        } else {
-            this.updateField(field.id, {value: field.value});
+        this.updateField(field.id, {value: field.value});
+        if (!this.state[field.id].valid) {
             this.validateField(field.id, field);
         }
-
-        if (this.props.onChange && this.props.onChange[field.id]) {
-            this.props.onChange[field.id](field);
-        }
+        addOnChange(field.id, field, this.props.onChange);
     };
 
     handleInputBlur = e => {
         const field = e.target;
         this.validateField(field.id, field);
-
-        if (this.props.onBlur && this.props.onBlur[field.id]) {
-            this.props.onBlur[field.id](field);
-        }
+        addOnBlur(field.id, field, this.props.onBlur);
     };
 
     handleRadioChange = e => {
         const field = e.target;
         this.updateField(field.name, {value: field.value});
+    };
+
+    handleCheckboxChange = e => {
+        const field = e.target;
+        this.updateField(field.id, {value: field.checked});
     };
 
 
@@ -156,6 +217,19 @@ class FormValidated extends Component {
                         props["aria-invalid"] = !this.state[fieldId].valid;
                         props["aria-errormessage"] = fieldId + "-errormessage";
                     }
+
+                    return React.cloneElement(child, props);
+                } 
+
+                if (["checkbox"].indexOf(child.props.type) > -1) {
+                    const fieldId = child.props.id;
+
+                    const props = {
+                        checked: this.state[fieldId].value === true,
+                        onChange: this.handleCheckboxChange,
+                        "aria-invalid": !this.state[fieldId].valid,
+                        "aria-errormessage": fieldId + "-errormessage"
+                    };
 
                     return React.cloneElement(child, props);
                 } 
@@ -206,6 +280,10 @@ class FormValidated extends Component {
     };
 
     render() {
+
+        // TODO: Nå rendres hele skjemaet på nytt for hver endring i state. 
+        // Kan dette optimaliseres?
+        // console.log('Remder: ' + Date.now());
 
         return (
             <form onSubmit={this.handleSubmit} noValidate>
