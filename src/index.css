@@ -179,6 +179,10 @@ table code {
 }
 
 
+[type="checkbox"] {
+  margin-right: 1.2rem;
+}
+
 [type="radio"] {
   margin-right: 1.2rem;
 }

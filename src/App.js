@@ -75,12 +75,6 @@ class App extends Component {
                 <section>
                     <h2>Valideringsregler</h2>
 
-
-                    <h3>Når valideres det?</h3>
-
-
-
-
                     <h3>Hva valideres?</h3>
 
                     <p>Alle HTML5-attributter</p>

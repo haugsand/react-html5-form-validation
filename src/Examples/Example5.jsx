@@ -28,9 +28,9 @@ class Example5 extends Component {
                                 name="fieldLanguages"
                                 type="checkbox"
                             />
-                            Norsk
+                            Norsk <span data-errorfor="fieldNorwegian" className="field__errormessage" />
                         </label>
-                        <p data-errorfor="fieldNorwegian" className="field__errormessage" />
+                        
 
                         <label htmlFor="fieldEnglish">
                             <input
@@ -39,9 +39,9 @@ class Example5 extends Component {
                                 type="checkbox"
                                 required
                             />
-                            Engelsk
+                            Engelsk <span data-errorfor="fieldEnglish" className="field__errormessage" />
                         </label>
-                        <p data-errorfor="fieldEnglish" className="field__errormessage" />
+                        
 
                         <label htmlFor="fieldGerman">
                             <input
@@ -49,9 +49,9 @@ class Example5 extends Component {
                                 name="fieldLanguages"
                                 type="checkbox"
                             />
-                            Tysk
+                            Tysk <span data-errorfor="fieldGerman" className="field__errormessage" />
                         </label>
-                        <p data-errorfor="fieldGerman" className="field__errormessage" />
+                        
 
                         <label htmlFor="fieldFrench">
                             <input
@@ -59,9 +59,9 @@ class Example5 extends Component {
                                 name="fieldLanguages"
                                 type="checkbox"
                             />
-                            Fransk
+                            Fransk <span data-errorfor="fieldFrench" className="field__errormessage" />
                         </label>
-                        <p data-errorfor="fieldFrench" className="field__errormessage" />
+                        
 
                     </div>
 

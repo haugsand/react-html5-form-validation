@@ -173,6 +173,7 @@ class FormValidated extends Component {
     handleCheckboxChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.checked});
+        this.validateField(field.id, field);
     };
 
 
@@ -227,6 +228,7 @@ class FormValidated extends Component {
                     const props = {
                         checked: this.state[fieldId].value === true,
                         onChange: this.handleCheckboxChange,
+                        ref: fieldId,
                         "aria-invalid": !this.state[fieldId].valid,
                         "aria-errormessage": fieldId + "-errormessage"
                     };
@@ -283,7 +285,8 @@ class FormValidated extends Component {
 
         // TODO: Nå rendres hele skjemaet på nytt for hver endring i state. 
         // Kan dette optimaliseres?
-        // console.log('Remder: ' + Date.now());
+        // State må endres pga. constraints
+        // console.log('Remnder: ' + Date.now());
 
         return (
             <form onSubmit={this.handleSubmit} noValidate>
