@@ -198,7 +198,7 @@ table code {
 }
 
 
-.field--invalid {
+[aria-invalid="true"]{
   border: 0.1rem solid #EB5757;
 }
 

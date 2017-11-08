@@ -25,21 +25,19 @@ const unSupportedInputTypes = [
 
 function elementIsAField(element) { return fieldElements.indexOf(element) > -1; }
 function inputTypeIsUnsupported(type) { return unSupportedInputTypes.indexOf(type) > -1; }
-function childIsNotAnElement(child) { return !child.props; }
 function elementIsErrorMessage(element) { return element.props["data-errorfor"]; }
 function elementHasChildren(element) { return element.props.children; }
-
-
-
-
+function childIsNotAnElement(child) { if (child === null || !child.props) { return true; } }
 
 
 
 function getInitialState(fieldList, initialValues) {
-    let initialState = {};
+    let initialState = {
+        fields: {}
+    };
 
     fieldList.forEach(field => {
-        initialState[field] = {
+        initialState.fields[field] = {
             value: "",
             errorMessage: false,
             valid: true
@@ -47,7 +45,7 @@ function getInitialState(fieldList, initialValues) {
     });
 
     Object.keys(initialValues).forEach(key => {
-        initialState[key].value = initialValues[key];
+        initialState.fields[key].value = initialValues[key];
     });
 
     return initialState;
@@ -108,7 +106,7 @@ class FormValidated extends Component {
     updateField = (fieldId, newState) => {
         this.setState(prevState =>
             update(prevState, {
-                [fieldId]: { $merge: newState }
+                fields: { [fieldId]: { $merge: newState }} 
             })
         );
     };
@@ -143,8 +141,8 @@ class FormValidated extends Component {
 
         if (isValid) {
             let values = {};
-            Object.keys(this.state).forEach(key => {
-                values[key] = this.state[key].value;
+            Object.keys(this.state.fields).forEach(key => {
+                values[key] = this.state.fields[key].value;
             });
             this.props.onSubmit(values);
         }
@@ -153,7 +151,7 @@ class FormValidated extends Component {
     handleInputChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.value});
-        if (!this.state[field.id].valid) {
+        if (!this.state.fields[field.id].valid) {
             this.validateField(field.id, field);
         }
         addOnChange(field.id, field, this.props.onChange);
@@ -168,12 +166,14 @@ class FormValidated extends Component {
     handleRadioChange = e => {
         const field = e.target;
         this.updateField(field.name, {value: field.value});
+        addOnChange(field.name, field, this.props.onChange);
     };
 
     handleCheckboxChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.checked});
         this.validateField(field.id, field);
+        addOnChange(field.id, field, this.props.onChange);
     };
 
 
@@ -184,7 +184,7 @@ class FormValidated extends Component {
 
         let constraints = {};
         constraintsAttr.forEach(attr => {
-            constraints[attr] = this.state[
+            constraints[attr] = this.state.fields[
                 props["data-constraint-" + attr]
             ].value;
         });
@@ -205,17 +205,19 @@ class FormValidated extends Component {
                     return React.cloneElement(child, {});
                 }
 
+                // TODO: Legg til støtte for input-felter som ikke er i fieldList
+
                 if (["radio"].indexOf(child.props.type) > -1) {
                     const fieldId = child.props.name;
 
                     const props = {
-                        checked: this.state[fieldId].value === child.props.value,
+                        checked: this.state.fields[fieldId].value === child.props.value,
                         onChange: this.handleRadioChange
                     };
 
                     if (child.props.required) {
                         props.ref = fieldId;
-                        props["aria-invalid"] = !this.state[fieldId].valid;
+                        props["aria-invalid"] = !this.state.fields[fieldId].valid;
                         props["aria-errormessage"] = fieldId + "-errormessage";
                     }
 
@@ -226,10 +228,10 @@ class FormValidated extends Component {
                     const fieldId = child.props.id;
 
                     const props = {
-                        checked: this.state[fieldId].value === true,
+                        checked: this.state.fields[fieldId].value === true,
                         onChange: this.handleCheckboxChange,
                         ref: fieldId,
-                        "aria-invalid": !this.state[fieldId].valid,
+                        "aria-invalid": !this.state.fields[fieldId].valid,
                         "aria-errormessage": fieldId + "-errormessage"
                     };
 
@@ -239,20 +241,12 @@ class FormValidated extends Component {
                 const constraints = this.getConstraints(child.props);
                 const fieldId = child.props.id;
 
-                let fieldClassNames = this.state[fieldId].valid
-                    ? "field--valid"
-                    : "field--invalid";
-                if (child.props.className) {
-                    fieldClassNames += " " + child.props.className;
-                }
-
                 const props = {
                     ref: fieldId,
-                    className: fieldClassNames,
                     onChange: this.handleInputChange,
                     onBlur: this.handleInputBlur,
-                    value: this.state[fieldId].value,
-                    "aria-invalid": !this.state[fieldId].valid,
+                    value: this.state.fields[fieldId].value,
+                    "aria-invalid": !this.state.fields[fieldId].valid,
                     "aria-errormessage": fieldId + "-errormessage",
                     ...constraints
                 };
@@ -267,7 +261,7 @@ class FormValidated extends Component {
                     id: fieldId + "-errormessage",
                     role: "alert"
                 };
-                return React.cloneElement(child, props, this.state[fieldId].errorMessage);
+                return React.cloneElement(child, props, this.state.fields[fieldId].errorMessage);
             } 
 
             if (elementHasChildren(child)) { 
@@ -281,12 +275,37 @@ class FormValidated extends Component {
         return childrenWithProps;
     };
 
+
+    componentWillReceiveProps(nextProps) {
+
+        // TODO: Mulig optimaliseringP Kontroller gamle mot nye props.
+
+        let newState = getInitialState(nextProps.fieldList, nextProps.initialValues) 
+
+        this.setState(prevState => {
+
+            Object.keys(newState.fields).forEach(key => {
+                if (prevState.fields[key]) {
+                    newState.fields[key] = prevState.fields[key]
+                }
+            });
+
+            return update(prevState, {
+                fields: { $set: newState.fields }
+            });
+        });
+    }
+
+
     render() {
 
         // TODO: Nå rendres hele skjemaet på nytt for hver endring i state. 
         // Kan dette optimaliseres?
         // State må endres pga. constraints
         // console.log('Remnder: ' + Date.now());
+        // Kan flytte addPropsToChildren til ComponentWillMount. Referer til funksjon som henter state, 
+        // i stedet for å hente verdien.
+
 
         return (
             <form onSubmit={this.handleSubmit} noValidate>

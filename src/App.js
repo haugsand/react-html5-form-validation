@@ -11,6 +11,7 @@ import Example4 from "./Examples/Example4";
 import Example5 from "./Examples/Example5";
 import Example6 from "./Examples/Example6";
 import Example7 from "./Examples/Example7";
+import Example8 from "./Examples/Example8";
 
 import ex1 from "!raw-loader!./Examples/Example1.jsx";
 import ex2 from "!raw-loader!./Examples/Example2.jsx";
@@ -19,6 +20,7 @@ import ex4 from "!raw-loader!./Examples/Example4.jsx";
 import ex5 from "!raw-loader!./Examples/Example5.jsx";
 import ex6 from "!raw-loader!./Examples/Example6.jsx";
 import ex7 from "!raw-loader!./Examples/Example7.jsx";
+import ex8 from "!raw-loader!./Examples/Example8.jsx";
 
 
 class App extends Component {
@@ -66,7 +68,8 @@ class App extends Component {
                         <li>Skal være enkelt å ta i bruk, med minimal konfigurasjon.</li>
                         <li>Skal være mulig å lage mer avansert funksjonalitet med å utvide morkomponenten,
                         fremfor å konfigurere denne komponenten.</li>
-                        <li>Du velger selv all HTML og CSS.</li>
+                        <li>Du har full kontroll på all HTML og CSS.</li>
+                        <li>Løser få oppgaver med lite fleksibilitet, fremfor å løse mange oppgaver med stor fleksibilitet.</li>
                     </ul>
 
                 </section>
@@ -328,6 +331,19 @@ class App extends Component {
                 <section>
                     <h2><span>Eksempel 8 </span>Dynamiske skjema</h2>
                     <p>Skjema-elementer vises/skjules avhengig av verdier i andre felt.</p>
+
+                    <ul>
+                        <li>Send med en onChange-funksjon, som endrer intern state i morkomponenten.</li>
+                        <li>Send samtidig inn en oppdatert fieldList.</li>
+                        <li>Innskrevne verdier nullstilles når felt skjules, 
+                            for å unngå at disse verdiene sendes med når skjemaet submittes. 
+                            Dette kan eventuelt omgås i morkomponenten.</li>
+                    </ul>
+
+                    <Example8 />
+
+                    <CodeBlock input={ex8} />
+
                 </section>
 
                 <section>
