@@ -17,6 +17,7 @@ const fieldElements = [
 
 const unSupportedInputTypes = [
     "button", 
+    "color",
     "hidden", 
     "image", 
     "reset", 
@@ -28,6 +29,117 @@ function inputTypeIsUnsupported(type) { return unSupportedInputTypes.indexOf(typ
 function elementIsErrorMessage(element) { return element.props["data-errorfor"]; }
 function elementHasChildren(element) { return element.props.children; }
 function childIsNotAnElement(child) { if (child === null || !child.props) { return true; } }
+
+
+function getConstraints(props, state) {
+    const constraintsAttr = Object.keys(props)
+        .filter(attr => attr.indexOf("data-constraint") === 0)
+        .map(attr => attr.slice(16));
+
+    let constraints = {};
+    constraintsAttr.forEach(attr => {
+        constraints[attr] = state[
+            props["data-constraint-" + attr]
+        ].value;
+    });
+
+    return constraints;
+};
+
+
+
+function addPropsToChildren(children, state, handles) {
+
+    return React.Children.map(children, child => {
+
+        // TODO: Skriv om. "return child" skal ikke gjentas.
+
+        if (childIsNotAnElement(child)) {
+            return child;
+        }
+
+
+        // TODO: Legg til støtte for input-felter som ikke er i fieldList
+        //       if(elementIsInFieldList)
+
+
+        if (elementIsAField(child.type)) {
+
+            if (inputTypeIsUnsupported(child.props.type)) {
+                return child;
+            }
+
+
+            if (["radio"].indexOf(child.props.type) > -1) {
+                const fieldId = child.props.name;
+
+                const props = {
+                    checked: state[fieldId].value === child.props.value,
+                    onChange: handles.radioChange
+                };
+
+                if (child.props.required) {
+                    props.ref = fieldId;
+                    props["aria-invalid"] = !state[fieldId].valid;
+                    props["aria-errormessage"] = fieldId + "-errormessage";
+                }
+
+                return React.cloneElement(child, props);
+            } 
+
+            if (["checkbox"].indexOf(child.props.type) > -1) {
+                const fieldId = child.props.id;
+
+                const props = {
+                    checked: state[fieldId].value === true,
+                    onChange: handles.checkboxChange,
+                    ref: fieldId,
+                    "aria-invalid": !state[fieldId].valid,
+                    "aria-errormessage": fieldId + "-errormessage"
+                };
+
+                return React.cloneElement(child, props);
+            } 
+
+            const constraints = getConstraints(child.props, state);
+            const fieldId = child.props.id;
+
+            const props = {
+                ref: fieldId,
+                onChange: handles.inputChange,
+                onBlur: handles.inputBlur,
+                value: state[fieldId].value,
+                "aria-invalid": !state[fieldId].valid,
+                "aria-errormessage": fieldId + "-errormessage",
+                ...constraints
+            };
+
+            return React.cloneElement(child, props);
+
+        } 
+
+        if (elementIsErrorMessage(child)) {
+            const fieldId = child.props["data-errorfor"];
+            const props = {
+                id: fieldId + "-errormessage",
+                role: "alert"
+            };
+            return React.cloneElement(child, props, state[fieldId].errorMessage);
+        } 
+
+        if (elementHasChildren(child)) { 
+            const grandChildren = addPropsToChildren(child.props.children, state, handles);
+            return React.cloneElement(child, {}, grandChildren);
+        }
+
+        return child;
+    });
+
+};
+
+
+
+
 
 
 
@@ -121,16 +233,19 @@ class FormValidated extends Component {
             })
     };
 
-    handleSubmit = e => {
+    submitForm = e => {
         e.preventDefault();
 
         let isValid = true;
 
+        console.log(this.refs);
+
+        // TODO: Traverser this.refs direkte i stedet
         this.props.fieldList.forEach(fieldId => {
             if (this.refs[fieldId]) {
                 const field = this.refs[fieldId];
 
-                // TODO: Tar ikke hensyn til customValidation
+                // TODO: Tar ikke hensyn til customValidation, må flyttes etter validateField ...
                 if (!field.validity.valid) {
                     isValid = false;
                 }
@@ -148,7 +263,10 @@ class FormValidated extends Component {
         }
     };
 
-    handleInputChange = e => {
+
+
+
+    inputChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.value});
         if (!this.state.fields[field.id].valid) {
@@ -157,123 +275,38 @@ class FormValidated extends Component {
         addOnChange(field.id, field, this.props.onChange);
     };
 
-    handleInputBlur = e => {
+    inputBlur = e => {
         const field = e.target;
         this.validateField(field.id, field);
         addOnBlur(field.id, field, this.props.onBlur);
     };
 
-    handleRadioChange = e => {
+    radioChange = e => {
         const field = e.target;
         this.updateField(field.name, {value: field.value});
+        this.validateField(field.name, field);
         addOnChange(field.name, field, this.props.onChange);
     };
 
-    handleCheckboxChange = e => {
+    checkboxChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.checked});
         this.validateField(field.id, field);
         addOnChange(field.id, field, this.props.onChange);
     };
 
-
-    getConstraints = props => {
-        const constraintsAttr = Object.keys(props)
-            .filter(attr => attr.indexOf("data-constraint") === 0)
-            .map(attr => attr.slice(16));
-
-        let constraints = {};
-        constraintsAttr.forEach(attr => {
-            constraints[attr] = this.state.fields[
-                props["data-constraint-" + attr]
-            ].value;
-        });
-
-        return constraints;
+    handles = {
+        checkboxChange: this.checkboxChange,
+        inputBlur: this.inputBlur,
+        inputChange: this.inputChange,
+        radioChange: this.radioChange
     };
 
-    addPropsToChildren = children => {
-        const childrenWithProps = React.Children.map(children, child => {
 
-            if (childIsNotAnElement(child)) {
-                return child;
-            }
 
-            if (elementIsAField(child.type)) {
 
-                if (inputTypeIsUnsupported(child.props.type)) {
-                    return React.cloneElement(child, {});
-                }
 
-                // TODO: Legg til støtte for input-felter som ikke er i fieldList
 
-                if (["radio"].indexOf(child.props.type) > -1) {
-                    const fieldId = child.props.name;
-
-                    const props = {
-                        checked: this.state.fields[fieldId].value === child.props.value,
-                        onChange: this.handleRadioChange
-                    };
-
-                    if (child.props.required) {
-                        props.ref = fieldId;
-                        props["aria-invalid"] = !this.state.fields[fieldId].valid;
-                        props["aria-errormessage"] = fieldId + "-errormessage";
-                    }
-
-                    return React.cloneElement(child, props);
-                } 
-
-                if (["checkbox"].indexOf(child.props.type) > -1) {
-                    const fieldId = child.props.id;
-
-                    const props = {
-                        checked: this.state.fields[fieldId].value === true,
-                        onChange: this.handleCheckboxChange,
-                        ref: fieldId,
-                        "aria-invalid": !this.state.fields[fieldId].valid,
-                        "aria-errormessage": fieldId + "-errormessage"
-                    };
-
-                    return React.cloneElement(child, props);
-                } 
-
-                const constraints = this.getConstraints(child.props);
-                const fieldId = child.props.id;
-
-                const props = {
-                    ref: fieldId,
-                    onChange: this.handleInputChange,
-                    onBlur: this.handleInputBlur,
-                    value: this.state.fields[fieldId].value,
-                    "aria-invalid": !this.state.fields[fieldId].valid,
-                    "aria-errormessage": fieldId + "-errormessage",
-                    ...constraints
-                };
-
-                return React.cloneElement(child, props);
-
-            } 
-
-            if (elementIsErrorMessage(child)) {
-                const fieldId = child.props["data-errorfor"];
-                const props = {
-                    id: fieldId + "-errormessage",
-                    role: "alert"
-                };
-                return React.cloneElement(child, props, this.state.fields[fieldId].errorMessage);
-            } 
-
-            if (elementHasChildren(child)) { 
-                const grandChildren = this.addPropsToChildren(child.props.children);
-                return React.cloneElement(child, {}, grandChildren);
-            }
-
-            return React.cloneElement(child, {});
-        });
-
-        return childrenWithProps;
-    };
 
 
     componentWillReceiveProps(nextProps) {
@@ -308,8 +341,8 @@ class FormValidated extends Component {
 
 
         return (
-            <form onSubmit={this.handleSubmit} noValidate>
-                {this.addPropsToChildren(this.props.children)}
+            <form onSubmit={this.submitForm} noValidate>
+                {addPropsToChildren(this.props.children, this.state.fields, this.handles)}
             </form>
         );
     }
