@@ -31,6 +31,8 @@ function elementHasChildren(element) { return element.props.children; }
 function childIsNotAnElement(child) { if (child === null || !child.props) { return true; } }
 
 
+
+
 function getConstraints(props, state) {
     const constraintsAttr = Object.keys(props)
         .filter(attr => attr.indexOf("data-constraint") === 0)
@@ -50,7 +52,12 @@ function getConstraints(props, state) {
 
 function addPropsToChildren(children, state, handles) {
 
+
+
+    //console.log(Object.keys(state));
+
     return React.Children.map(children, child => {
+
 
         // TODO: Skriv om. "return child" skal ikke gjentas.
 
@@ -58,6 +65,10 @@ function addPropsToChildren(children, state, handles) {
             return child;
         }
 
+
+
+        //console.log(child.props.name);
+        //console.log(child.props.id);
 
         // TODO: Legg til støtte for input-felter som ikke er i fieldList
         //       if(elementIsInFieldList)
@@ -224,12 +235,13 @@ class FormValidated extends Component {
     };
 
     validateField = (fieldId, field) => {
-        addCustomValidation(fieldId, field, this.props.customValidation)
+        return addCustomValidation(fieldId, field, this.props.customValidation)
             .then(field => {
                 this.updateField(fieldId, {
                     valid: field.validity.valid,
                     errorMessage: getErrorMessage(field)
                 });
+                return field.validity.valid;
             })
     };
 
@@ -238,29 +250,28 @@ class FormValidated extends Component {
 
         let isValid = true;
 
-        console.log(this.refs);
-
-        // TODO: Traverser this.refs direkte i stedet
-        this.props.fieldList.forEach(fieldId => {
-            if (this.refs[fieldId]) {
-                const field = this.refs[fieldId];
-
-                // TODO: Tar ikke hensyn til customValidation, må flyttes etter validateField ...
-                if (!field.validity.valid) {
-                    isValid = false;
-                }
-                this.validateField(fieldId, field);
-            }
+        const validations = Object.keys(this.refs).map(fieldId => {
+            const field = this.refs[fieldId];
+            return this.validateField(fieldId, field)
+                .then(valid => {
+                    if (!valid) {
+                        isValid = false;
+                    }
+                });
         });
 
+        Promise.all(validations)
+            .then(() => {
 
-        if (isValid) {
-            let values = {};
-            Object.keys(this.state.fields).forEach(key => {
-                values[key] = this.state.fields[key].value;
-            });
-            this.props.onSubmit(values);
-        }
+                if (isValid) {
+                    let values = {};
+                    Object.keys(this.state.fields).forEach(key => {
+                        values[key] = this.state.fields[key].value;
+                    });
+                    this.props.onSubmit(values);
+                }
+                
+            })
     };
 
 
