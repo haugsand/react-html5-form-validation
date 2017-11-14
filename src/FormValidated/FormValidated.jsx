@@ -2,208 +2,9 @@ import React, { Component } from "react";
 import { array, func, object } from 'prop-types';
 import update from "immutability-helper";
 
-import { getErrorMessage } from "./validation";
-
-
-
-
-
-
-const fieldElements = [
-    "input", 
-    "select", 
-    "textarea"
-];
-
-const unSupportedInputTypes = [
-    "button", 
-    "color",
-    "hidden", 
-    "image", 
-    "reset", 
-    "submit"
-];
-
-function elementIsAField(element) { return fieldElements.indexOf(element) > -1; }
-function inputTypeIsUnsupported(type) { return unSupportedInputTypes.indexOf(type) > -1; }
-function elementIsErrorMessage(element) { return element.props["data-errorfor"]; }
-function elementHasChildren(element) { return element.props.children; }
-function childIsNotAnElement(child) { if (child === null || !child.props) { return true; } }
-
-
-
-
-function getConstraints(props, state) {
-    const constraintsAttr = Object.keys(props)
-        .filter(attr => attr.indexOf("data-constraint") === 0)
-        .map(attr => attr.slice(16));
-
-    let constraints = {};
-    constraintsAttr.forEach(attr => {
-        constraints[attr] = state[
-            props["data-constraint-" + attr]
-        ].value;
-    });
-
-    return constraints;
-};
-
-
-
-function addPropsToChildren(children, state, handles) {
-
-
-
-    //console.log(Object.keys(state));
-
-    return React.Children.map(children, child => {
-
-
-        // TODO: Skriv om. "return child" skal ikke gjentas.
-
-        if (childIsNotAnElement(child)) {
-            return child;
-        }
-
-
-
-        //console.log(child.props.name);
-        //console.log(child.props.id);
-
-        // TODO: Legg til støtte for input-felter som ikke er i fieldList
-        //       if(elementIsInFieldList)
-
-
-        if (elementIsAField(child.type)) {
-
-            if (inputTypeIsUnsupported(child.props.type)) {
-                return child;
-            }
-
-
-            if (["radio"].indexOf(child.props.type) > -1) {
-                const fieldId = child.props.name;
-
-                const props = {
-                    checked: state[fieldId].value === child.props.value,
-                    onChange: handles.radioChange
-                };
-
-                if (child.props.required) {
-                    props.ref = fieldId;
-                    props["aria-invalid"] = !state[fieldId].valid;
-                    props["aria-errormessage"] = fieldId + "-errormessage";
-                }
-
-                return React.cloneElement(child, props);
-            } 
-
-            if (["checkbox"].indexOf(child.props.type) > -1) {
-                const fieldId = child.props.id;
-
-                const props = {
-                    checked: state[fieldId].value === true,
-                    onChange: handles.checkboxChange,
-                    ref: fieldId,
-                    "aria-invalid": !state[fieldId].valid,
-                    "aria-errormessage": fieldId + "-errormessage"
-                };
-
-                return React.cloneElement(child, props);
-            } 
-
-            const constraints = getConstraints(child.props, state);
-            const fieldId = child.props.id;
-
-            const props = {
-                ref: fieldId,
-                onChange: handles.inputChange,
-                onBlur: handles.inputBlur,
-                value: state[fieldId].value,
-                "aria-invalid": !state[fieldId].valid,
-                "aria-errormessage": fieldId + "-errormessage",
-                ...constraints
-            };
-
-            return React.cloneElement(child, props);
-
-        } 
-
-        if (elementIsErrorMessage(child)) {
-            const fieldId = child.props["data-errorfor"];
-            const props = {
-                id: fieldId + "-errormessage",
-                role: "alert"
-            };
-            return React.cloneElement(child, props, state[fieldId].errorMessage);
-        } 
-
-        if (elementHasChildren(child)) { 
-            const grandChildren = addPropsToChildren(child.props.children, state, handles);
-            return React.cloneElement(child, {}, grandChildren);
-        }
-
-        return child;
-    });
-
-};
-
-
-
-
-
-
-
-function getInitialState(fieldList, initialValues) {
-    let initialState = {
-        fields: {}
-    };
-
-    fieldList.forEach(field => {
-        initialState.fields[field] = {
-            value: "",
-            errorMessage: false,
-            valid: true
-        };
-    });
-
-    Object.keys(initialValues).forEach(key => {
-        initialState.fields[key].value = initialValues[key];
-    });
-
-    return initialState;
-}
-
-function addCustomValidation(fieldId, field, customValidation) {
-    return new Promise((resolve, reject) => {
-        if (customValidation[fieldId]) {
-            customValidation[fieldId](field.value)
-                .then(errorMessage => {
-                    field.setCustomValidity(errorMessage);
-                    resolve(field);
-                })
-        } else {
-            resolve(field);
-        }
-    });
-}
-
-
-function addOnBlur(fieldId, field, onBlur) {
-    if (onBlur[fieldId]) {
-        onBlur[fieldId](field);
-    }
-}
-
-function addOnChange(fieldId, field, onChange) {
-    if (onChange[fieldId]) {
-        onChange[fieldId](field);
-    }
-}
-
-
-
-
+import getErrorMessage from "./getErrorMessage";
+import { addPropsToChildren } from "./addpropstochildren";
+import { getInitialState, addCustomValidation, addOnBlur, addOnChange } from "./helpers";
 
 
 class FormValidated extends Component {
@@ -262,7 +63,6 @@ class FormValidated extends Component {
 
         Promise.all(validations)
             .then(() => {
-
                 if (isValid) {
                     let values = {};
                     Object.keys(this.state.fields).forEach(key => {
@@ -270,7 +70,6 @@ class FormValidated extends Component {
                     });
                     this.props.onSubmit(values);
                 }
-                
             })
     };
 
@@ -312,12 +111,6 @@ class FormValidated extends Component {
         inputChange: this.inputChange,
         radioChange: this.radioChange
     };
-
-
-
-
-
-
 
 
     componentWillReceiveProps(nextProps) {
