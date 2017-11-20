@@ -1,18 +1,14 @@
-export function getInitialState(fieldList, initialValues) {
+export function getInitialState(fields) {
     let initialState = {
         fields: {}
     };
 
-    fieldList.forEach(field => {
-        initialState.fields[field] = {
-            value: "",
+    Object.keys(fields).forEach(fieldId => {
+        initialState.fields[fieldId] = {
+            value: fields[fieldId],
             errorMessage: false,
             valid: true
         };
-    });
-
-    Object.keys(initialValues).forEach(key => {
-        initialState.fields[key].value = initialValues[key];
     });
 
     return initialState;

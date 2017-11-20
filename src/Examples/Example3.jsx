@@ -9,10 +9,10 @@ class Example3 extends Component {
         comment: ''
     }
 
-    fieldList = [
-        "fieldComment",
-        "fieldInterest"
-    ];
+    fields = {
+        fieldComment: '',
+        fieldInterest: this.state.interest
+    };
 
     submitForm = data => {
         alert(JSON.stringify(data, null, 4));
@@ -46,21 +46,16 @@ class Example3 extends Component {
         fieldInterest: this.updateInterest
     };
 
-    initialValues = {
-        fieldInterest: this.state.interest
-    };
-
     render() {
 
         const totalInterest = (this.state.nibor + this.state.interest).toFixed(2);
 
         return (
             <FormValidated 
-                fieldList={this.fieldList} 
+                fields={this.fields} 
                 onSubmit={this.submitForm} 
                 onBlur={this.onBlur}
                 onChange={this.onChange}
-                initialValues={this.initialValues} 
             >
                 <fieldset>
 

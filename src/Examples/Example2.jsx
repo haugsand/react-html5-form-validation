@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import FormValidated from "./../FormValidated/FormValidated";
 
 class Example2 extends Component {
-    fieldList = [
-        "fieldTotalAmount",
-        "fieldMinAmount",
-        "fieldMaxAmount"
-    ];
+    fields = {
+        fieldTotalAmount: '',
+        fieldMinAmount: '',
+        fieldMaxAmount: ''
+    };
 
     submitForm = data => {
         alert(JSON.stringify(data, null, 4));
@@ -15,8 +15,8 @@ class Example2 extends Component {
 
     render() {
         return (
-            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} >
-                <fieldset>
+            <FormValidated fields={this.fields} onSubmit={this.submitForm} >
+                <fieldset id="example2">
 
                     <div className="field">
                         <label htmlFor="fieldTotalAmount">Total etterspørsel</label>

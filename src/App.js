@@ -12,6 +12,7 @@ import Example5 from "./Examples/Example5";
 import Example6 from "./Examples/Example6";
 import Example7 from "./Examples/Example7";
 import Example8 from "./Examples/Example8";
+import Example9 from "./Examples/Example9";
 
 import ex1 from "!raw-loader!./Examples/Example1.jsx";
 import ex2 from "!raw-loader!./Examples/Example2.jsx";
@@ -21,6 +22,7 @@ import ex5 from "!raw-loader!./Examples/Example5.jsx";
 import ex6 from "!raw-loader!./Examples/Example6.jsx";
 import ex7 from "!raw-loader!./Examples/Example7.jsx";
 import ex8 from "!raw-loader!./Examples/Example8.jsx";
+import ex9 from "!raw-loader!./Examples/Example9.jsx";
 
 
 class App extends Component {
@@ -37,6 +39,27 @@ class App extends Component {
 
                 <section>
                     <h2>Bakgrunn</h2>
+
+                    <h3>Andre rammeverk</h3>
+
+                    <p>Det finnes mange andre bibliotek for ReactJS som håndterer forms. For eksempel:</p>
+
+                    <ul> 
+                        <li><a href="https://github.com/react-tools/react-form">React Form</a></li>
+                        <li><a href="https://github.com/prometheusresearch/react-forms">React Forms</a></li>
+                        <li><a href="https://github.com/erikras/redux-form/">Redux Form</a></li>
+                    </ul>
+
+                    <p>Jeg velger å lage noe eget fordi:</p>
+
+                    <ul>
+                        <li>Skjema-elementene abstraheres vekk i egne komponenter.</li>
+                        <li>I stedet for å bruke Constraint API, skriver du dine egne valideringsregler.</li>
+                        <li>HTML5-attributtene brukes ikke til å angi valideringsreglene.</li>
+                        <li>Mye konfigurasjon og frihetsgrader.</li>
+                        <li>Mye kode for å håndtere state, onchange-events og lignende.</li>
+                        <li>Tar ikke utgangspunkt i best practices for validering, men overlater alt til brukeren.</li>
+                    </ul>
 
 
                     <h3>Motivasjon</h3>
@@ -80,7 +103,8 @@ class App extends Component {
 
                     <h3>Hva valideres?</h3>
 
-                    <p>Alle HTML5-attributter</p>
+                    <p>Det er støtte for alle skjemaelementer og valideringsattributter i HTML5-standarden, 
+                    bortsett fra input reset, input submit og button. </p>
 
                     <div className="table-container">
                         <table>
@@ -106,12 +130,16 @@ class App extends Component {
                                     <td>&#10003;</td><td></td><td></td><td></td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date">input date</a></td>
-                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color">input color</a> <sup>2</sup></td>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local">input datetime-local</a></td>
-                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date">input date</a> <sup>3</sup></td>
+                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>(&#10003;)</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local">input datetime-local</a> <sup>3</sup></td>
+                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>(&#10003;)</td>
                                 </tr>
                                 <tr>
                                     <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email">input email</a></td>
@@ -122,8 +150,12 @@ class App extends Component {
                                     <td>&#10003;</td><td></td><td></td><td></td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/month">input month</a></td>
-                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/hidden">input hidden</a> <sup>1</sup></td>
+                                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/month">input month</a> <sup>3</sup></td>
+                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>(&#10003;)</td>
                                 </tr>
                                 <tr>
                                     <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number">input number</a></td>
@@ -138,7 +170,7 @@ class App extends Component {
                                     <td>&#10003;</td><td></td><td></td><td></td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range">input range</a></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range">input range</a> <sup>2</sup></td>
                                     <td></td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td>
                                 </tr>
                                 <tr>
@@ -154,16 +186,16 @@ class App extends Component {
                                     <td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/time">input time</a></td>
-                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/time">input time</a> <sup>3</sup></td>
+                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>(&#10003;)</td>
                                 </tr>
                                 <tr>
                                     <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url">input url</a></td>
                                     <td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td></td><td></td><td></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/week">input week</a></td>
-                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td></td>
+                                    <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/week">input week</a> <sup>3</sup></td>
+                                    <td>&#10003;</td><td></td><td></td><td></td><td>&#10003;</td><td>&#10003;</td><td>(&#10003;)</td>
                                 </tr>
                                 <tr>
                                     <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea">textarea</a></td>
@@ -175,6 +207,14 @@ class App extends Component {
                                 </tr>
                             </tbody>
                         </table>
+
+                        <ol>
+                            <li>Verdien på hidden kan ikke angis av brukeren, og det er derfor ikke relevant med valideringsregler.</li>
+                            <li>Required er ikke relevant for color og range, fordi de ikke kan ha en tom verdi, 
+                            og får automatisk en startverdi av nettleseren.</li>
+                            <li>date, datetime-local, month, time og week har støtte for range-attributten, 
+                            men denne brukes til å angi steglengde i input, og ikke til validering.</li>
+                        </ol>
                     </div>
 
 
@@ -228,7 +268,6 @@ class App extends Component {
 
                 </section>
 
-
                 <section>
                     <h2><span>Eksempel 2 </span>Skjema med avhengigheter mellom felter</h2>
 
@@ -273,7 +312,7 @@ class App extends Component {
                     <ul>
                         <li>Radio-knapper grupperes ved å ha lik name-attributt.</li>
                         <li>Det er name-attributten, ikke id, som skal sendes inn i fieldList.</li>
-                        <li>For at gruppen skal valideres, må én av radio-knappene ha required-attributen.</li>
+                        <li>For at gruppen skal valideres, må én av radio-knappene ha required-attributen, med id lik name.</li>
                         <li>Ikke la flere enn en radio-knapp i hver gruppe ha required-attributt.</li>
                     </ul>
 
@@ -328,11 +367,14 @@ class App extends Component {
 
                 </section>
 
+
                 <section>
                     <h2><span>Eksempel 8 </span>Dynamiske skjema</h2>
                     <p>Skjema-elementer vises/skjules avhengig av verdier i andre felt.</p>
 
                     <ul>
+                        <li>Om du vil at feltet skal ha required, må du legge ved en tom option-verdi.</li>
+                        <li>Om du vil at en option skal være valgt som standard, må du legge til intialverdi i fields-objektet.</li>
                         <li>Send med en onChange-funksjon, som endrer intern state i morkomponenten.</li>
                         <li>Send samtidig inn en oppdatert fieldList.</li>
                         <li>Innskrevne verdier nullstilles når felt skjules, 
@@ -347,14 +389,33 @@ class App extends Component {
                 </section>
 
                 <section>
-                    <h2><span>Eksempel 9 </span>Kombinere flere skjemaer</h2>
-                    <p>Kan dette skjemmaet kombineres med et felt som finnes et annet sted?</p>
+                    <h2><span>Eksempel 9 </span>Farge og hidden</h2>
+                    <p>Eksempel på obskure input-typer.</p>
+
+                    <ul>
+                        <li>Ingen valideringsattributter er relevant for input color. 
+                        Men kan være en del av et større skjema.</li>
+                        <li>Likevel relevant med constraints, eller custom validation.</li>
+                        <li>Ingen validering på hidden, og heller ingen input. 
+                        Men kan være del av et større skjema.</li>
+                    </ul>
+
+                    <Example9 />
+
+                    <CodeBlock input={ex9} />
                 </section>
 
 
                 <section>
-                    <h2><span>Eksempel 10 </span>Multiple verdier</h2>
-                    <p>Noen elementer har støtte for mer enn én verdi.</p>
+                    <h2><span>Eksempel 10 </span>Kombinere flere skjemaer</h2>
+                    <p>Kan dette skjemaet kombineres med et felt som finnes et annet sted?</p>
+                </section>
+
+
+                <section>
+                    <h2><span>Eksempel 11 </span>Multiple verdier</h2>
+                    <p>Noen elementer har støtte for mer enn én verdi. 
+                    Det gjelder select og file.</p>
                 </section>
 
 

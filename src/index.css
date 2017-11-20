@@ -9,14 +9,14 @@ html {
 
 body {
   color: #444;
-  font-family: "Muli", sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   font-size: 1.8rem;
   font-weight: 400;
   line-height: 1;
 }
 
 strong {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 main {
@@ -29,6 +29,11 @@ header {
 
 section {
   margin: 0 0 12.8rem 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Oxygen", sans-serif;
+  font-weight: 700;
 }
 
 h1 {
@@ -64,13 +69,13 @@ p {
 
 .table-container {
   background-color: #f7f7f7;
+  font-size: 1.6rem;
   margin: 6.4rem -12.8rem;
   padding: 3.2rem 3.2rem 3.2rem 12.8rem;
 }
 
 table {
   border-collapse: collapse;
-  font-size: 1.6rem;
   margin: 0 -0.8rem;
 }
 
@@ -102,7 +107,8 @@ tbody tr:hover {
 }
 
 ul, ol {
-  margin: 3.2rem 0 3.2rem 3.2rem;
+  line-height: 1.6;
+  margin: 2.4rem 0 2.4rem 3.2rem;
 }
 
 p:last-child,
@@ -120,7 +126,7 @@ dl {
 }
 
 dt {
-  font-weight: 700;
+  font-weight: 600;
   margin: 0 0 0.8rem 0;
 }
 
@@ -134,7 +140,7 @@ dd {
 
 label {
   display: block;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0 0 1.2rem 0;
 }
 
@@ -169,7 +175,8 @@ table code {
 
 [type="text"],
 [type="number"],
-[type="password"] {
+[type="password"], 
+select {
   border: 0.1rem solid #444;
   font-family: "Muli", sans-serif;
   font-size: 1.6rem;
@@ -193,7 +200,7 @@ table code {
   color: #fff;
   font-family: "Muli", sans-serif;
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.8rem 1.6rem;
 }
 
@@ -213,11 +220,10 @@ table code {
 
 .field__errormessage {
   color: #EB5757;
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.4rem;
   line-height: 1;
   margin: 0.8rem 0 0 0;
-  min-height: 1.3rem; 
+  min-height: 1.4rem; 
 }
 
 

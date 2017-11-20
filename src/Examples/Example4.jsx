@@ -3,9 +3,9 @@ import FormValidated from "./../FormValidated/FormValidated";
 
 class Example4 extends Component {
 
-    fieldList = [
-        "fieldAnimal"
-    ];
+    fields = {
+        fieldAnimal: ''
+    };
 
     submitForm = data => {
         alert(JSON.stringify(data, null, 4));
@@ -13,14 +13,14 @@ class Example4 extends Component {
 
     render() {
         return (
-            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} >
-                <fieldset>
+            <FormValidated fields={this.fields} onSubmit={this.submitForm} >
+                <fieldset id="example4">
 
                     <div className="field">
                         <p>Hva er ditt favorittdyr?</p>
-                        <label htmlFor="valueHorse">
+                        <label htmlFor="fieldAnimal">
                             <input
-                                id="valueHorse"
+                                id="fieldAnimal"
                                 name="fieldAnimal"
                                 type="radio"
                                 value="Horse"
@@ -28,18 +28,18 @@ class Example4 extends Component {
                             />
                             Hest
                         </label>
-                        <label htmlFor="valueFox">
+                        <label htmlFor="fieldAnimal2">
                             <input
-                                id="valueFox"
+                                id="fieldAnimal2"
                                 name="fieldAnimal"
                                 type="radio"
                                 value="Fox"
                             />
                             Rev
                         </label>
-                        <label htmlFor="valueBeaver">
+                        <label htmlFor="fieldAnimal3">
                             <input
-                                id="valueBeaver"
+                                id="fieldAnimal3"
                                 name="fieldAnimal"
                                 type="radio"
                                 value="Beaver"

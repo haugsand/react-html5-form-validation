@@ -5,27 +5,27 @@ class Example8 extends Component {
 
     state = {
         expandForm: false,
-        fieldList: [
-            "fieldResignation"
-        ]
+        fields: {
+            fieldResignation: ''
+        }
     };
 
-    toggleExpandForm = element => {
+    toggleExpandForm = e => {
 
-        if (element.id === 'valueOtherexplanation') {
+        if (e.value === 'other') {
             this.setState(prevState => ({
                 expandForm: true,
-                fieldList: [
-                    "fieldResignation",
-                    "fieldExplanation"
-                ]
+                fields: {
+                    fieldResignation: '',
+                    fieldExplanation: ''
+                }
             }));
         } else {
             this.setState(prevState => ({
                 expandForm: false,
-                fieldList: [
-                    "fieldResignation"
-                ]
+                fields: {
+                    fieldResignation: ''
+                }
             })); 
         }
     };
@@ -40,41 +40,25 @@ class Example8 extends Component {
 
     render() {
 
-        //console.log(this.state);
         return (
-            <FormValidated fieldList={this.state.fieldList} onSubmit={this.submitForm} onChange={this.onChange} >
-                <fieldset>
+            <FormValidated fields={this.state.fields} onSubmit={this.submitForm} onChange={this.onChange} >
+                <fieldset id="example8">
 
                     <div className="field">
-                        <p>Hvorfor avslutter du abonnementet?</p>
-                        <label htmlFor="valueNouse">
-                            <input
-                                id="valueNouse"
-                                name="fieldResignation"
-                                type="radio"
-                                value="No use"
-                                required
-                            />
-                            Jeg har ikke bruk for det lenger
+                        <label htmlFor="fieldResignation">
+                            Hvorfor avslutter du abonnementet?
                         </label>
-                        <label htmlFor="valueBetteralternative">
-                            <input
-                                id="valueBetteralternative"
-                                name="fieldResignation"
-                                type="radio"
-                                value="Better alternative"
-                            />
-                            Jeg har funnet et bedre alternativ
-                        </label>
-                        <label htmlFor="valueOtherexplanation">
-                            <input
-                                id="valueOtherexplanation"
-                                name="fieldResignation"
-                                type="radio"
-                                value="Other"
-                            />
-                            Annet årsak
-                        </label>
+
+                        <select id="fieldResignation" required>
+                            <option value="">Velg ...</option>
+                            <option value="no-use">Jeg har ikke bruk for det lenger</option>
+                            <option value="better-alternative">Jeg har funnet et bedre alternativ</option>
+                            <option value="too-expensive">Abonnementet er for dyrt</option>
+                            <option value="against-beliefs">Abonnementet strider imot min trosretning</option>
+                            <option value="do-not-know">Jeg vet ikke</option>
+                            <option value="other">Annen årsak</option>
+                        </select>
+
                         <p data-errorfor="fieldResignation" className="field__errormessage" />
                     </div>
 

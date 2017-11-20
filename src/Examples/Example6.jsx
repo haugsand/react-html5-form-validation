@@ -3,10 +3,10 @@ import FormValidated from "./../FormValidated/FormValidated";
 
 class Example6 extends Component {
 
-    fieldList = [
-        "fieldPassword1", 
-        "fieldPassword2"
-    ];
+    fields = {
+        fieldPassword1: '', 
+        fieldPassword2: ''
+    };
 
     submitForm = data => {
         alert(JSON.stringify(data, null, 4));
@@ -14,7 +14,7 @@ class Example6 extends Component {
 
     render() {
         return (
-            <FormValidated fieldList={this.fieldList} onSubmit={this.submitForm} >
+            <FormValidated fields={this.fields} onSubmit={this.submitForm} >
                 <fieldset>
 
                     <div className="field">

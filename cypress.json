@@ -1,0 +1,8 @@
+{
+  "fixturesFolder": false,
+  "supportFile": false,
+  "integrationFolder": "src/test",
+  "baseUrl": "http://localhost:3000",
+  "screenshotOnHeadlessFailure": false,
+  "videoRecording": false
+}

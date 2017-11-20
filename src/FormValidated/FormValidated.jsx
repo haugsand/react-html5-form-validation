@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { array, func, object } from 'prop-types';
+import { func, object } from 'prop-types';
 import update from "immutability-helper";
 
 import getErrorMessage from "./getErrorMessage";
@@ -9,14 +9,13 @@ import { getInitialState, addCustomValidation, addOnBlur, addOnChange } from "./
 
 class FormValidated extends Component {
 
-    state = getInitialState(this.props.fieldList, this.props.initialValues);
+    state = getInitialState(this.props.fields);
 
     static propTypes = {
-        fieldList: array.isRequired,
+        fields: object.isRequired,
         onSubmit: func.isRequired,
         onBlur: object,
         onChange: object,
-        initialValues: object,
         customValidation: object
     };
 
@@ -49,11 +48,20 @@ class FormValidated extends Component {
     submitForm = e => {
         e.preventDefault();
 
+        const formElements = e.target.elements;
+        const fieldList = Object.keys(this.state.fields);
+
+        let fields = [];
+        for (let i = 0; i < formElements.length; i++) {
+            if (fieldList.indexOf(formElements[i].id) > -1) {
+                fields.push(formElements[i]);
+            }
+        }
+
         let isValid = true;
 
-        const validations = Object.keys(this.refs).map(fieldId => {
-            const field = this.refs[fieldId];
-            return this.validateField(fieldId, field)
+        const validations = fields.map(field => {
+            return this.validateField(field.id, field)
                 .then(valid => {
                     if (!valid) {
                         isValid = false;
@@ -98,6 +106,24 @@ class FormValidated extends Component {
         addOnChange(field.name, field, this.props.onChange);
     };
 
+    selectChange = e => {
+        const field = e.target;
+        this.updateField(field.id, {value: field.value});
+        if (!this.state.fields[field.id].valid) {
+            this.validateField(field.id, field);
+        }
+        addOnChange(field.id, field, this.props.onChange);
+    };
+
+    colorChange = e => {
+        const field = e.target;
+        this.updateField(field.id, {value: field.value});
+        if (!this.state.fields[field.id].valid) {
+            this.validateField(field.id, field);
+        }
+        addOnChange(field.id, field, this.props.onChange);
+    };
+
     checkboxChange = e => {
         const field = e.target;
         this.updateField(field.id, {value: field.checked});
@@ -105,11 +131,16 @@ class FormValidated extends Component {
         addOnChange(field.id, field, this.props.onChange);
     };
 
+    // TODO: Add file
+
+
     handles = {
         checkboxChange: this.checkboxChange,
+        colorChange: this.colorChange,
         inputBlur: this.inputBlur,
         inputChange: this.inputChange,
-        radioChange: this.radioChange
+        radioChange: this.radioChange,
+        selectChange: this.selectChange
     };
 
 
@@ -117,7 +148,7 @@ class FormValidated extends Component {
 
         // TODO: Mulig optimaliseringP Kontroller gamle mot nye props.
 
-        let newState = getInitialState(nextProps.fieldList, nextProps.initialValues) 
+        let newState = getInitialState(nextProps.fields) 
 
         this.setState(prevState => {
 
