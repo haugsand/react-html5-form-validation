@@ -40,6 +40,8 @@ class App extends Component {
                 <section>
                     <h2>Bakgrunn</h2>
 
+                    <p>En liten tekst.</p>
+
                     <h3>Andre rammeverk</h3>
 
                     <p>Det finnes mange andre bibliotek for ReactJS som håndterer forms. For eksempel:</p>
